@@ -1,5 +1,7 @@
 package org.acme.microprofile.graphql;
 
+import io.quarkus.logging.Log;
+import io.quarkus.vertx.http.runtime.CurrentVertxRequest;
 import io.smallrye.graphql.api.Subscription;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor;
@@ -13,6 +15,7 @@ import org.eclipse.microprofile.graphql.Source;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+
 import java.util.List;
 
 @GraphQLApi
@@ -22,11 +25,15 @@ public class FilmResource {
     @Inject
     GalaxyService service;
 
+    @Inject
+    CurrentVertxRequest request;
+
     private final BroadcastProcessor<Hero> processor = BroadcastProcessor.create();
 
     @Query("allFilms")
     @Description("Get all Films from a galaxy far far away")
     public List<Film> getAllFilms() {
+        Log.info("Received X-Auth-Token: " + request.getCurrent().request().getHeader("X-Auth-Token"));
         return service.getAllFilms();
     }
 
@@ -56,7 +63,6 @@ public class FilmResource {
     public List<Hero> getHeroesWithSurname(@DefaultValue("Skywalker") String surname) {
         return service.getHeroesBySurname(surname);
     }
-
 
     @Subscription
     public Multi<Hero> heroCreated() {
