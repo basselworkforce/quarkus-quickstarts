@@ -33,7 +33,7 @@ public class FilmResource {
     @Query("allFilms")
     @Description("Get all Films from a galaxy far far away")
     public List<Film> getAllFilms() {
-        Log.info("Received X-Auth-Token: " + request.getCurrent().request().getHeader("X-Auth-Token"));
+        Log.info("Received X-Service-Secret: " + request.getCurrent().request().getHeader("X-Service-Secret"));
         return service.getAllFilms();
     }
 
